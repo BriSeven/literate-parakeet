@@ -480,20 +480,43 @@ if($bare) {
 
 
 		let pollInterval = 1000;
+		let pollMax = 60000*5;
 
 
 
 
 		setTimeout(function poll (){
+			/* make multiple open tabs less mean */
+
+			if( localStorage.getItem('windowID') ){
+				if( +localStorage.getItem('windowID') < localtimestamp ) {
+					localStorage.setItem('windowID', localtimestamp);
+					console.log('i am the leader');
+					pollInterval = 1000;
+					pollMax = 60000*5;
+				} else if( +localStorage.getItem('windowID') === localtimestamp ) {
+					console.log('i am still the leader');
+				} else {
+					console.log('i am the follower');
+					pollMax = 60000*30;
+					pollInterval = 60000*5;
+				}
+			}  else {
+				localStorage.setItem('windowID', localtimestamp);
+			};
+
+
 			fetch("?poll=poll")
 			.catch((x)=>{
 				pollInterval*=1.4142135624;
-				pollInterval = pollInterval > 60000*5 ? 60000*5 : pollInterval;
+				pollInterval = pollInterval > pollMax ? pollMax : pollInterval;
 				setTimeout(poll,pollInterval);
 			})
 			.then((x)=>x.text())
 			.then((x)=>(+x))
 			.then(function(lastmod){
+
+
 				if(lastmod>timestamp) {
 
 					fetch(location.search + "&bare=bare")
