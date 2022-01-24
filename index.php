@@ -286,7 +286,7 @@ if($bare) {
 
 		.message-window article {
 			background:  var(--themecolor6);
-			border-radius: 1em;
+			border-radius: 1em 1em 1em 0em;
 			margin: .5em;
 			padding: 1em;
 			position: relative;
@@ -307,6 +307,7 @@ if($bare) {
 			color: var(--themecolor8);
 			margin-left: 20vw;
 			margin-right: .5em;
+			border-radius: 1em 1em 0em 1em;
 		}
 
 		.message-window article.user-1 {
@@ -417,7 +418,7 @@ if($bare) {
 			background: var(--themecolor7);
 			margin: 1em;
 			margin-right: calc( 25vw + 0em);
-			border-radius: 1em;
+			border-radius: 1em 1em 0em 1em;
 			border: 0;
 			padding: 1em;
 			resize: none;
