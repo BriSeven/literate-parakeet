@@ -93,6 +93,8 @@ if( $_POST['message'] ) {
 	
 	logmessage($_POST, $filename, $safeuser, $isodatetime);
 	$did_post = true; 
+	// echo print_r($_SERVER);
+	header('Location: '.$_SERVER['HTTP_REFERER']."#last");
 
 }
 if(file_exists( $filename )) {
@@ -158,7 +160,7 @@ function printmymsg ($msgs) {
 	 if($userme != '') {
 		 $txt .= "<section id=\"messagewindow\" data-timestamp=\"$filemtime\" class=\"message-window\">";
 		 
-		 $txt .= "<h1>$filename</h1>";
+		 $txt .= "<h1><a href=\"$filename\">$filename</a></h1>";
 	   
 
 	    
@@ -242,6 +244,9 @@ if($bare) {
 			padding: 0;
 			margin:  0;
 			margin-bottom: 10em;
+		}
+		h1 a {
+			color:  var(--themecolor5);
 		}
 		.message-window {
 			margin:  0;
