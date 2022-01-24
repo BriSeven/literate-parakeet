@@ -18,7 +18,7 @@ $isodatetime = date(DATE_ATOM, $time);
 $isodate = date('Y-m-d', $time);
 
 $did_post = false;
-$filename = "$isodate.txt";
+$filename = "logs/$isodate.txt";
 $filemtime = 0;
 // todo: sanitise user
 
@@ -71,7 +71,7 @@ function parseparams ($str) {
 	return $results;
 }
 
-function logmessage ($postparams, $filename, $safeuser, $isodatetime) {
+function logmessage ($postparams, $fn, $safeuser, $isodatetime) {
 	// todo: check for form template
 	// for now, it's only one: "plain text message"
 
@@ -85,7 +85,7 @@ function logmessage ($postparams, $filename, $safeuser, $isodatetime) {
 	$txt .= "\n";
 	$txt .= $cleanmessage;
 	
-	file_put_contents($filename, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
+	file_put_contents($fn, $txt.PHP_EOL , FILE_APPEND | LOCK_EX);
 }
 
 
@@ -258,7 +258,7 @@ if($bare) {
 
 		}
 		.message-body {
-			white-space: pre;
+			white-space: pre-wrap;
 		}
 		.message-body hr{
 			padding: 0;
@@ -273,10 +273,10 @@ if($bare) {
 			position: relative;
 		}
 		.message-window article h2 {
-			font-size:  1em;
+			font-size: .8em;
 			opacity: 0.5;
 			position: absolute;
-			top: -.2em;
+			top: -.5em;
 			right: .8em;
 		}
 
