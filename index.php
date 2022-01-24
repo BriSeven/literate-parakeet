@@ -353,14 +353,26 @@ if($bare) {
 			padding: 0;
 			margin: 1rem;
 		}
-		article.user-me + article.user-me {
+		article.user-me + article.user-me,
+		article.user-1  + article.user-1 ,
+		article.user-2  + article.user-2 ,
+		article.user-3  + article.user-3 ,
+		article.user-4  + article.user-4 ,
+		article.user-5  + article.user-5 ,
+		article.user-6  + article.user-6 
+		{
 			margin-top: -1.0em;
 			box-shadow: 0px -3px 0px 0px rgba(0, 0, 0, 0.2);
 		}
 
 		article.is-emoji + article.is-emoji ,
-		article.user-me + article.user-me.is-emoji, 
-		article.user-me.is-emoji + article.user-me
+		article.user-me  + article.user-me.is-emoji, article.user-me.is-emoji + article.user-me,
+		article.user-1   + article.user-1.is-emoji,  article.user-1.is-emoji  + article.user-1 ,
+		article.user-2   + article.user-2.is-emoji,  article.user-2.is-emoji  + article.user-2 ,
+		article.user-3   + article.user-3.is-emoji,  article.user-3.is-emoji  + article.user-3 ,
+		article.user-4   + article.user-4.is-emoji,  article.user-4.is-emoji  + article.user-4 ,
+		article.user-5   + article.user-5.is-emoji,  article.user-5.is-emoji  + article.user-5 ,
+		article.user-6   + article.user-6.is-emoji,  article.user-6.is-emoji  + article.user-6 
 		{
 			margin-top: 1rem;
 			box-shadow: none;
