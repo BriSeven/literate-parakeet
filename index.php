@@ -295,7 +295,7 @@ if($bare) {
 			font-size: .8em;
 			opacity: 0.5;
 			position: absolute;
-			top: -.5em;
+			bottom: -.5em;
 			right: .8em;
 		}
 
@@ -353,10 +353,18 @@ if($bare) {
 			padding: 0;
 			margin: 1rem;
 		}
-		.message-window article.is-emoji.user-me + article.user-me {
-			background-color: white;
+		article.user-me + article.user-me {
+			margin-top: -1.0em;
+			box-shadow: 0px -3px 0px 0px rgba(0, 0, 0, 0.2);
 		}
 
+		article.is-emoji + article.is-emoji ,
+		article.user-me + article.user-me.is-emoji, 
+		article.user-me.is-emoji + article.user-me
+		{
+			margin-top: 1rem;
+			box-shadow: none;
+		}
 
 		.message-window article.is-emoji.user-1,
 		.message-window article.is-emoji.user-2,
