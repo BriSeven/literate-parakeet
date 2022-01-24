@@ -97,6 +97,7 @@ if( $_POST['message'] ) {
 	header('Location: '.$_SERVER['HTTP_REFERER']."#last");
 
 }
+
 if(file_exists( $filename )) {
 	$msgs = file_get_contents( $filename );
 	$msgs = preg_split("/(^---+\n?)|(\n---+\n?)/",$msgs);
@@ -132,7 +133,7 @@ function parsemsg ($msg) {
 
 		// treat emoji specially
 		$is_emoji = '';
-		if(mb_strlen($msg) == 1) {
+		if(mb_strlen(html_entity_decode($msg)) <= 5) {
 			$is_emoji = 'is-emoji';
 		}
 		// assign users colors
@@ -151,7 +152,7 @@ function parsemsg ($msg) {
 		$params['timestamp'] 	 = $date; 
 		$params['time']      	 = $time; 
 		$params['msg']       	 = trim($msg);
-		$params['msg_length']	 = mb_strlen($msg);
+		$params['msg_length']	 = mb_strlen(html_entity_decode($msg)) ;
 
 		return $params;
 
@@ -352,8 +353,23 @@ if($bare) {
 			padding: 0;
 			margin: 1rem;
 		}
+		.message-window article.is-emoji.user-me + article.user-me {
+			background-color: white;
+		}
+
+
+		.message-window article.is-emoji.user-1,
+		.message-window article.is-emoji.user-2,
+		.message-window article.is-emoji.user-3,
+		.message-window article.is-emoji.user-4,
+		.message-window article.is-emoji.user-5,
+		.message-window article.is-emoji.user-6 {
+			text-align: left;
+		}
 		.message-window article.is-emoji h2 {
-			display: none;
+			opacity: 1;
+			font-size: .5rem;
+			position: relative;
 		}
 
 		.message-window article.is-emoji p {
@@ -397,6 +413,13 @@ if($bare) {
 			width: calc( 25vw - 2em);
 			margin: 1em 0em 2em 0em;
 			box-sizing: border-box;
+		}
+
+		@media (max-width: 398px) {
+			#sendbutton {
+				font-size: .8rem;
+			}
+			
 		}
 		.no-messages {
 			color:  white;
