@@ -323,7 +323,7 @@ if($bare) {
 		}
 		.message-window article.anonymous, .message-window article.user-3 {
 			background-color: var(--themecolor2);
-			color: var(--themecolor8);
+			color: var(--themecolor5);
 			margin-right: 19vw;
 			margin-left:  calc( 1vw + .5em);
 		}
