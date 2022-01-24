@@ -105,9 +105,13 @@ if(file_exists( $filename )) {
 	$msgs = array();
 }
 
+global $users, $usercounter;
+$users = array();
+$usercounter = 0;
 
 function parsemsg ($msg) {
-		global $userme;
+		// todo: replace globals with a setting fetcher/setter method.
+		global $userme, $users, $usercounter;
 
 		$msgarray = explode("\n",$msg);
 		$firstline = array_shift($msgarray);
@@ -122,7 +126,7 @@ function parsemsg ($msg) {
 		if($date) {
 			$time =  date('g:i:s a', $date);
 		}
-		$userclass = $userme == $user ? "user-me" : "user-1";
+		
 
 		$msg = trim(implode("\n",$msgarray));
 
@@ -131,7 +135,16 @@ function parsemsg ($msg) {
 		if(mb_strlen($msg) == 1) {
 			$is_emoji = 'is-emoji';
 		}
-		
+		// assign users colors
+		if(!array_key_exists($user,$users)){
+			$users[$user] = $usercounter;
+			$usercounter += 1;
+		}
+
+		$userclass = 'user-' . (($users[$user] % 6) + 1);
+
+		$userclass = $userme == $user ? "user-me" : $userclass;
+
 		$params['user']      	 = $user;
 		$params['is_emoji']  	 = $is_emoji; 
 		$params['userclass'] 	 = $userclass; 
@@ -292,18 +305,44 @@ if($bare) {
 			background-color: var(--themecolor4);
 			color: var(--themecolor8);
 			margin-left: 20vw;
+			margin-right: .5em;
 		}
 
 		.message-window article.user-1 {
 			background-color: var(--themecolor5);
 			color: var(--themecolor8);
 			margin-right: 20vw;
+			margin-left: .5em;
 		}
 		.message-window article.user-2 {
-
+			background-color: var(--themecolor3);
+			color: var(--themecolor8);
+			margin-right: 21vw;
+			margin-left: calc(-1vw + .5em);
 		}
-		.message-window article.anonymous {
-
+		.message-window article.anonymous, .message-window article.user-3 {
+			background-color: var(--themecolor2);
+			color: var(--themecolor8);
+			margin-right: 19vw;
+			margin-left:  calc( 1vw + .5em);
+		}
+		.message-window article.user-4 {
+			background-color: var(--themecolor1);
+			color: var(--themecolor8);
+			margin-right: 18vw;
+			margin-left:  calc( 2vw + .5em);
+		}
+		.message-window article.user-5 {
+			background-color: var(--themecolor6);
+			color: var(--themecolor8);
+			margin-right: 17vw;
+			margin-left:  calc( 3vw + .5em);
+		}
+		.message-window article.user-6 {
+			background-color: var(--themecolor8);
+			color: var(--themecolor5);
+			margin-right: 16vw;
+			margin-left:  calc( 4vw + .5em);
 		}
 
 		.message-window article.is-emoji {
@@ -335,33 +374,30 @@ if($bare) {
 		}
 		#message {
 			bottom: 0;
-			
 			position: absolute;
 			left: 0;
 			top: 0;
-			width:  -webkit-fill-available;
+			width: -webkit-fill-available;
 			background: var(--themecolor7);
 			margin: 1em;
-			margin-right: calc( 20vw + 1em);
-			
+			margin-right: calc( 25vw + 0em);
 			border-radius: 1em;
-			border:  0;
+			border: 0;
 			padding: 1em;
 			resize: none;
 			box-shadow: inset 0px -2px 10px 1px var(--themecolor1);
-
 		}
 		#sendbutton {
-		    position: absolute;
-		    left: 80vw;
-		    top: 0;
-		    right: 0;
-		    bottom: 0;
-		    font-size: 1rem;
-		    width: calc( 20vw - 2em);
-		    margin: 1em 1em 2em 0em;
+			position: absolute;
+			left: 75vw;
+			
+			right: 0;
+			height: calc(100% - 3em);
+			font-size: 1rem;
+			width: calc( 25vw - 2em);
+			margin: 1em 0em 2em 0em;
+			box-sizing: border-box;
 		}
-
 		.no-messages {
 			color:  white;
 			opacity: 0.8;
