@@ -353,6 +353,7 @@ if($bare) {
 			text-align: right;
 			padding: 0;
 			margin: 1rem;
+			color: var(--themecolor5);
 		}
 		article.user-me + article.user-me,
 		article.user-1  + article.user-1 ,
@@ -470,9 +471,63 @@ if($bare) {
     </form>
     <script>
 		//get timestamp
+		let timestamp = +document.querySelector('.message-window').dataset.timestamp;
+		let localtimestamp = Date.now()/1000;
+		let updateInterval = 0;
+
+		const sinceLastMod = (t=timestamp) => (Date.now()/1000 - (localtimestamp - t) - t);
+		const secondsSinceLoad = () => (Date.now()/1000 - localtimestamp);
+
+
+		let pollInterval = 1000;
+
+
+
+
+		setTimeout(function poll (){
+			fetch("?poll=poll")
+			.catch((x)=>{
+				pollInterval*=1.4142135624;
+				pollInterval = pollInterval > 60000*5 ? 60000*5 : pollInterval;
+				setTimeout(poll,pollInterval);
+			})
+			.then((x)=>x.text())
+			.then((x)=>(+x))
+			.then(function(lastmod){
+				if(lastmod>timestamp) {
+
+					fetch(location.search + "&bare=bare")
+					.then((x)=>x.text())
+					.then((html)=>{
+						document.querySelector('.message-window').outerHTML=html;
+					})
+					.then(()=>{
+						document.querySelector('#last').scrollIntoView({behavior: 'smooth'});
+					});
+
+					if(updateInterval === 0) {
+						updateInterval=lastmod-timestamp;
+					} else {
+						updateInterval = updateInterval*0.5 + (lastmod-timestamp)*0.5;
+					}
+					timestamp = lastmod;
+
+					pollInterval=1000;
+					setTimeout(poll,pollInterval);
+				} else {
+					pollInterval*=1.4142135624;
+					pollInterval = pollInterval > 60000*5 ? 60000*5 : pollInterval;
+					setTimeout(poll,pollInterval);
+				}
+			});
+			
+
+		},pollInterval);
 
 		//start poll
-
+			
+			// 
+			
 			//if poll true, fetch bare
 				//replace messagewindow with result
 				//scroll to bottom if necessary
