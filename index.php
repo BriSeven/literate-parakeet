@@ -235,7 +235,7 @@ if($bare) {
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<link rel="apple-touch-icon" href="logger.png">
 
-	<title>Logger</title>
+	<title>Literate Parakeet</title>
 	<style>
 
 		/* kopi */
