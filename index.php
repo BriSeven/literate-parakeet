@@ -421,27 +421,27 @@ if($bare) {
 			bottom: 0;
 			position: absolute;
 			left: 0;
+			right: 25vw;
 			top: 0;
-			width: -webkit-fill-available;
+			-webkit-appearance: none;
 			background: var(--themecolor7);
 			margin: 1em;
-			margin-right: calc( 25vw + 0em);
 			border-radius: 1em 1em 0em 1em;
 			border: 0;
 			padding: 1em;
 			resize: none;
+			box-sizing: border-box;
 			box-shadow: inset 0px -2px 10px 1px var(--themecolor1);
 		}
 		#sendbutton {
 			position: absolute;
 			left: 75vw;
-			
 			right: 0;
-			height: calc(100% - 3em);
+			bottom: 0;
 			font-size: 1rem;
-			width: calc( 25vw - 2em);
-			margin: 1em 0em 2em 0em;
+			margin: 1em 2em 2em 0em;
 			box-sizing: border-box;
+			top: 0;
 		}
 
 		@media (max-width: 398px) {
