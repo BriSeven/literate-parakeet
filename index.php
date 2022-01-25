@@ -223,11 +223,18 @@ if($bare) {
 }
 
 
-?><!DOCTYPE html>
+?>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+	<!-- Set the iOS status bar to black. -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="apple-touch-icon" href="logger.png">
+
 	<title>Logger</title>
 	<style>
 
@@ -467,7 +474,7 @@ if($bare) {
     <form id="message-box" action="#last" method="POST">
 	
     <textarea placeholder="<?php echo $userme; ?>" autofocus name="message"  id="message"  ></textarea>
-    <button type="submit" name="sendbutton" id="sendbutton" value="send">send</button>
+    <button type="submit" name="sendbutton" id="sendbutton" value="send" ontouchstart>send</button>
     </form>
     <script>
 		//get timestamp
@@ -481,7 +488,7 @@ if($bare) {
 
 		let pollInterval = 1000;
 		let pollMax = 60000*5;
-
+		let isLeader = false;
 
 
 
@@ -492,12 +499,14 @@ if($bare) {
 				if( +localStorage.getItem('windowID') < localtimestamp ) {
 					localStorage.setItem('windowID', localtimestamp);
 					console.log('i am the leader');
+					isLeader = true;
 					pollInterval = 1000;
 					pollMax = 60000*5;
 				} else if( +localStorage.getItem('windowID') === localtimestamp ) {
 					console.log('i am still the leader');
 				} else {
 					console.log('i am the follower');
+					isLeader = false;
 					pollMax = 60000*30;
 					pollInterval = 60000*5;
 				}
