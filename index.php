@@ -264,7 +264,8 @@ if($bare) {
 		body {
 			padding: 0;
 			margin:  0;
-			margin-bottom: 10em;
+			
+			background: var(--themecolor7);
 		}
 		h1 a {
 			color:  var(--themecolor5);
@@ -272,7 +273,7 @@ if($bare) {
 		.message-window {
 			margin:  0;
 			display: flex;
-			padding: 1em;
+			padding: 1em 1em 10em 1em;
 			box-sizing: border-box;
 			background: var(--themecolor7);
 			font-family: sans-serif;
