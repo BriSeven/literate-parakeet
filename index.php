@@ -27,7 +27,7 @@ if($back == 1) {
 $backlink = '?' . $backlink . '&back=' . ($back+1);
 
 
-$thisurl = $_SERVER['QUERY_STRING'];
+$thisurl = '?' . $_SERVER['QUERY_STRING'];
 
 $isodatetime = date(DATE_ATOM, $time);
 $isodate = date('Y-m-d', $time);
