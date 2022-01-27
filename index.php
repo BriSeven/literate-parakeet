@@ -1,5 +1,5 @@
 <?php
-global $userme, $filename, $filemtime;
+global $userme, $filename, $filemtime, $backlink, $forwardlink;
 
 // set the default timezone to use.
 date_default_timezone_set('Australia/Sydney');
@@ -13,6 +13,21 @@ if(array_key_exists('back', $_GET) && $_GET['back'] != '' ) {
 
 
 $time = mktime() - $back*86400 ;
+$backlink = preg_replace("/&back=[0-9]+/",'',$_SERVER['QUERY_STRING']);
+
+$forwardlink = '';
+
+if($back == 1) {
+	$forwardlink = '?' . $backlink;
+} else if ($back > 0) {
+	$forwardlink = '?' . $backlink . '&back=' . ($back-1);
+} 
+
+
+$backlink = '?' . $backlink . '&back=' . ($back+1);
+
+
+$thisurl = $_SERVER['QUERY_STRING'];
 
 $isodatetime = date(DATE_ATOM, $time);
 $isodate = date('Y-m-d', $time);
@@ -95,6 +110,7 @@ if( $_POST['message'] ) {
 	$did_post = true; 
 	// echo print_r($_SERVER);
 	header('Location: '.$_SERVER['HTTP_REFERER']."#last");
+	
 
 }
 
@@ -162,7 +178,7 @@ function parsemsg ($msg) {
 function printmymsg ($msgs) {
 	 $txt = '';
 	 $count = 0;
-	 global $userme, $filemtime, $filename;
+	 global $userme, $filemtime, $filename, $backlink, $forwardlink;
 	 
 	 if($userme == '') { 
 		$txt .= "<form id=\"userform\" action=\"#last\" method=\"GET\">
@@ -172,8 +188,9 @@ function printmymsg ($msgs) {
 
 	 }
 	 if($userme != '') {
+
 		 $txt .= "<section id=\"messagewindow\" data-timestamp=\"$filemtime\" class=\"message-window\">";
-		 
+		 $txt .= "<h1><a href=\"$backlink\">older</a></h1>";
 		 $txt .= "<h1><a href=\"$filename\">$filename</a></h1>";
 	   
 
@@ -187,7 +204,6 @@ function printmymsg ($msgs) {
 
 				$count += 1;
 				
-
 				$pmsg = parsemsg($msg);
 				extract($pmsg);
 
@@ -204,8 +220,10 @@ function printmymsg ($msgs) {
 
 			}
 
-
 		 }
+		if($forwardlink) {
+			$txt .= "<h1><a href=\"$forwardlink\">newer</a></h1>";
+		}
 
 		if($count === 0 ){ 
 			
@@ -247,17 +265,16 @@ if($bare) {
 
 
 
-:root {
-
-	--themecolor1: #872b23;
-	--themecolor2: #ffb126;
-	--themecolor3: #3a782d;
-	--themecolor4: #e34550;
-	--themecolor5: #2c3260;
-	--themecolor6: #b3a2ac;
-	--themecolor7: #e0d1cf;
-	--themecolor8: #f9ebe2;
-}
+		:root {
+			--themecolor1: #872b23;
+			--themecolor2: #ffb126;
+			--themecolor3: #3a782d;
+			--themecolor4: #e34550;
+			--themecolor5: #2c3260;
+			--themecolor6: #b3a2ac;
+			--themecolor7: #e0d1cf;
+			--themecolor8: #f9ebe2;
+		}
 
 
 
@@ -480,6 +497,8 @@ if($bare) {
     <script>
 		//get timestamp
 		let timestamp = +document.querySelector('.message-window').dataset.timestamp;
+
+		
 		let localtimestamp = Date.now()/1000;
 		let updateInterval = 0;
 
@@ -487,9 +506,12 @@ if($bare) {
 		const secondsSinceLoad = () => (Date.now()/1000 - localtimestamp);
 
 
-		let pollInterval = 1000;
+		let pollInterval = 5000;
 		let pollMax = 60000*5;
 		let isLeader = false;
+		const backlink = "<?=$backlink?>";
+		const thisurl = "<?=$thisurl?>";
+		
 
 
 
@@ -501,7 +523,7 @@ if($bare) {
 					localStorage.setItem('windowID', localtimestamp);
 					console.log('i am the leader');
 					isLeader = true;
-					pollInterval = 1000;
+					pollInterval = 5000;
 					pollMax = 60000*5;
 				} else if( +localStorage.getItem('windowID') === localtimestamp ) {
 					console.log('i am still the leader');
@@ -515,8 +537,14 @@ if($bare) {
 				localStorage.setItem('windowID', localtimestamp);
 			};
 
+		//start poll
+			
+			//if poll true, fetch bare
+				//replace messagewindow with result
+				//scroll to bottom if necessary
+				//get new timestamp
 
-			fetch("?poll=poll")
+			fetch(thisurl+"&poll=poll")
 			.catch((x)=>{
 				pollInterval*=1.4142135624;
 				pollInterval = pollInterval > pollMax ? pollMax : pollInterval;
@@ -527,15 +555,20 @@ if($bare) {
 			.then(function(lastmod){
 
 
-				if(lastmod>timestamp) {
+					
+				if( lastmod > timestamp) {
 
 					fetch(location.search + "&bare=bare")
 					.then((x)=>x.text())
 					.then((html)=>{
 						document.querySelector('.message-window').outerHTML=html;
+						
 					})
 					.then(()=>{
-						document.querySelector('#last').scrollIntoView({behavior: 'smooth'});
+						let last = document.querySelector('#last');
+						if(last) { 
+							last.scrollIntoView({behavior: 'smooth'});
+						}
 					});
 
 					if(updateInterval === 0) {
@@ -556,16 +589,6 @@ if($bare) {
 			
 
 		},pollInterval);
-
-		//start poll
-			
-			// 
-			
-			//if poll true, fetch bare
-				//replace messagewindow with result
-				//scroll to bottom if necessary
-				//get new timestamp
-
 
 
 
