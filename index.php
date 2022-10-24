@@ -4,6 +4,8 @@ global $userme, $filename, $filemtime, $backlink, $forwardlink;
 // set the default timezone to use.
 date_default_timezone_set('Australia/Sydney');
 
+
+
 if(array_key_exists('back', $_GET) && $_GET['back'] != '' ) {
 	//parse number. 
 	$back=intval($_GET['back']);
@@ -31,6 +33,8 @@ $thisurl = '?' . $_SERVER['QUERY_STRING'];
 
 $isodatetime = date(DATE_ATOM, $time);
 $isodate = date('Y-m-d', $time);
+
+$dow = date('l', $time);
 
 $did_post = false;
 $filename = "logs/$isodate.txt";
@@ -78,9 +82,13 @@ function parseparams ($str) {
 		foreach ($semisplit[$key] as $subkey => $subvalue) {
 			$semisplit[$key][$subkey] = trim($subvalue);
 		}
-		
+		if( array_key_exists($key, $semisplit) && 
+			array_key_exists(0, $semisplit[$key]) &&
+			array_key_exists(1, $semisplit[$key])
+		) {
 
-		$results[$semisplit[$key][0]] = $semisplit[$key][1];
+			$results[$semisplit[$key][0]] = $semisplit[$key][1];
+		}
 		
 	}
 	return $results;
@@ -176,7 +184,9 @@ function parsemsg ($msg) {
 }
 
 function printmymsg ($msgs) {
+	global $dow;
 	 $txt = '';
+	 $nav = '';
 	 $count = 0;
 	 global $userme, $filemtime, $filename, $backlink, $forwardlink;
 	 
@@ -190,12 +200,20 @@ function printmymsg ($msgs) {
 	 if($userme != '') {
 
 		 $txt .= "<section id=\"messagewindow\" data-timestamp=\"$filemtime\" class=\"message-window\">";
-		 $txt .= "<h1><a href=\"$backlink\">older</a></h1>";
-		 $txt .= "<h1><a href=\"$filename\">$filename</a></h1>";
-	   
 
+		 $nav .= "<a  class=\"btn backlink\" href=\"$backlink\">older</a>";
+		 $nav .= "<a  class=\"btn filename\"href=\"$filename\">$filename</a>";
+	   
+		if($forwardlink) {
+			$nav .= "<a class=\"btn forwardlink\" href=\"$forwardlink\">newer</a>";
+		}
+
+		$nav = "<nav>$nav</nav>";
 	    
-    
+		$txt .= $nav; 
+
+		 $txt .= "<h1>$dow</h1>";
+
 		 for ($i=0; $i < count($msgs); $i++) { 
 			$msg = $msgs[$i];
 			
@@ -221,14 +239,15 @@ function printmymsg ($msgs) {
 			}
 
 		 }
-		if($forwardlink) {
-			$txt .= "<h1><a href=\"$forwardlink\">newer</a></h1>";
-		}
+
 
 		if($count === 0 ){ 
 			
 			$txt .= "<h2 class=\"no-messages\" >no messages yet</h2>";
+		} else {
+			$txt .= $nav;
 		}
+
 		$txt .= '</section>';
 	}
 	 return $txt;
@@ -287,15 +306,70 @@ if($bare) {
 		h1 a {
 			color:  var(--themecolor5);
 		}
+
+		h1 {
+			color:  var(--themecolor6);
+			text-align: center;
+		}
+
+		nav {
+			
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.btn {
+			border-top: 3px solid var(--themecolor8);
+
+
+
+			background: linear-gradient(0deg,  var(--themecolor6) 0%, var(--themecolor7) 100%);
+			padding: 11px 22px;
+			opacity: 0.5;
+
+
+			box-shadow:  var(--themecolor1) 0 3px 2px;
+			text-shadow: var(--themecolor3) 0 -1px 0;
+			color: black;
+			font-size: 15px;
+			font-family: 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+			text-decoration: none;
+			vertical-align: middle;
+		}
+
+		.btn:hover {
+			/*border-top-color: #28597a;*/
+			background: var(--themecolor7);
+			
+		}
+		.btn:active {
+			box-shadow:  var(--themecolor1) 0 1px 1px;
+			transform: translate(0px,2px);
+			
+		}
+
+		.btn {	
+		    
+		    border-radius: 1rem;
+		    
+		    padding: 1rem;
+		    position: relative;
+		    z-index: 1;
+
+		}
+
+		.btn:visited {
+			color:  var(--themecolor5);
+		}
 		.message-window {
 			margin:  0;
 			display: flex;
-			padding: 1em 1em 10em 1em;
+			padding: 1em 1em 11rem 1em;
 			box-sizing: border-box;
 			background: var(--themecolor7);
 			font-family: sans-serif;
 			min-height: calc( 100vh - 10em ) ;
-			justify-content: center;
+			justify-content: start;
 			flex-direction: column;
 			
 
@@ -315,6 +389,7 @@ if($bare) {
 			margin: .5em;
 			padding: 1em;
 			position: relative;
+
 		}
 		.message-window article h2 {
 			font-size: .8em;
@@ -432,7 +507,7 @@ if($bare) {
 			height: 10em;
 			background: var(--themecolor8);
 			box-shadow: 0px -2px 10px var(--themecolor1);
-
+			z-index: 2;
 
 		}
 		#message {
@@ -471,6 +546,16 @@ if($bare) {
 		.no-messages {
 			color:  white;
 			opacity: 0.8;
+			justify-content: center;
+			
+			display: flex;
+			bottom: 10rem;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			align-items: center;
+			pointer-events: none;
 		}
 		#userform {
 			text-align: center;
@@ -480,8 +565,16 @@ if($bare) {
 		}
 
 		#last {
-			height: calc(auto / 2)
+			height: calc(auto / 2);
+			transform: translate(0,200px);
+			transition: transform 200ms ease-in-out;
 		}
+		#last.animate {
+			
+			
+			transform: translate(0,0);
+		}
+
 	</style>
 	<link rel="stylesheet" href="mp.css">
 </head>
@@ -512,11 +605,14 @@ if($bare) {
 		const backlink = "<?=$backlink?>";
 		const thisurl = "<?=$thisurl?>";
 		
-
-
+		setTimeout(()=>{
+			document.querySelector('#last').classList.add("animate");
+		},10);
+		
 
 		setTimeout(function poll (){
 			/* make multiple open tabs less mean */
+			
 
 			if( localStorage.getItem('windowID') ){
 				if( +localStorage.getItem('windowID') < localtimestamp ) {
@@ -568,6 +664,7 @@ if($bare) {
 						let last = document.querySelector('#last');
 						if(last) { 
 							last.scrollIntoView({behavior: 'smooth'});
+							last.classList.add("animate");
 						}
 					});
 
